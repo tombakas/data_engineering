@@ -15,6 +15,8 @@ GENERATEC_DATA_DIR = "./generated_data"
 MOVIE_FILE = os.path.join(SOURCE_DATA_DIR, "movies_metadata.csv")
 CREDIT_FILE = os.path.join(SOURCE_DATA_DIR, "credits.csv")
 
+TOTAL_ACTORS = 4
+
 BUDGET_THRESHOLD = 1e7
 
 
@@ -134,7 +136,7 @@ def extract_details(movie, credits):
     if crew is not None and cast is not None:
         top_three_cast = []
         for member in cast:
-            if member["order"] in [0, 1, 2]:
+            if member["order"] in list(range(TOTAL_ACTORS)):
                 top_three_cast.append(member["name"])
 
         directors = []
