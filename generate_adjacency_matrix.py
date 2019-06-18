@@ -32,25 +32,28 @@ def main():
 
     i = 1
     for actor in actors:
-        print("{}%".format(i / total_actors * 100))
+        print("\rIterating over actors: {:>6.2f}%".format(i / total_actors * 100), end="", flush=True)
         for pair_dict in actor_edges.values():
             pair_values = list(pair_dict.values())
             if actor in pair_values:
                 pair_values.remove(actor)
                 actor_edge_sets[actor].add(pair_values[0])
         i += 1
+    print(" Done.")
 
     adj = np.zeros((total_actors, total_actors,))
 
-    print("Building matrix")
     for i, actor in enumerate(actors):
         for j in range(total_actors):
             paired_actor = actors[j]
-            print(i, j)
+            print("\rBuilding matrix: {:>6.2f}%".format(i / float(total_actors) * 100), end="", flush=True)
             if paired_actor in actor_edge_sets[actor]:
                 adj[i][j] = 1
+    print(" Done.")
 
     np.save("./matrix.npy", adj)
+    print("Matrix saved to \"matrix.npy\"")
+
 
 if __name__ == "__main__":
     main()
