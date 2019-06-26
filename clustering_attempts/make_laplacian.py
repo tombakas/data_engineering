@@ -4,6 +4,7 @@
 
 import numpy as np
 
+
 def main():
     m = np.load("./matrix.npy")
     dim = len(m[0])
