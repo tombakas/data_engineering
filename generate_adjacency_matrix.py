@@ -44,15 +44,15 @@ def main():
     adj = np.zeros((total_actors, total_actors,))
 
     for i, actor in enumerate(actors):
+        print("\rBuilding matrix: {:>6.2f}%".format(i / float(total_actors) * 100), end="", flush=True)
         for j in range(total_actors):
             paired_actor = actors[j]
-            print("\rBuilding matrix: {:>6.2f}%".format(i / float(total_actors) * 100), end="", flush=True)
             if paired_actor in actor_edge_sets[actor]:
                 adj[i][j] = 1
     print(" Done.")
 
-    np.save("./matrix.npy", adj)
-    print("Matrix saved to \"matrix.npy\"")
+    np.save("generated_data/matrix.npy", adj)
+    print("Matrix saved to \"GeneratorExit/matrix.npy\"")
 
 
 if __name__ == "__main__":
