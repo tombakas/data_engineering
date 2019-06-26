@@ -40,7 +40,7 @@ def get_counts(filename):
 def populate_matrices(m, filename):
     with open(filename, "r") as f:
         for line in f:
-            items = line.split(",")
+            items = line.split(";")
 
             edge = items[-1].strip()
             source = int(items[1]) - 1

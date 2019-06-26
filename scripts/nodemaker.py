@@ -8,8 +8,8 @@ import json
 from datetime import datetime as dt
 from itertools import combinations
 
-SOURCE_DATA_DIR = "./source_data"
-GENERATED_DATA_DIR = "./generated_data"
+SOURCE_DATA_DIR = "../source_data"
+GENERATED_DATA_DIR = "../generated_data"
 DRYRUN = False
 
 if len(sys.argv) == 1:

@@ -10,8 +10,8 @@ import json
 from json.decoder import JSONDecodeError
 from datetime import datetime as dt
 
-SOURCE_DATA_DIR = "./source_data"
-GENERATEC_DATA_DIR = "./generated_data"
+SOURCE_DATA_DIR = "../source_data"
+GENERATEC_DATA_DIR = "../generated_data"
 
 MOVIE_FILE = os.path.join(SOURCE_DATA_DIR, "movies_metadata.csv")
 CREDIT_FILE = os.path.join(SOURCE_DATA_DIR, "credits.csv")
