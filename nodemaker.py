@@ -29,7 +29,7 @@ elif len(sys.argv) > 1:
 def node_build(data, type_name):
     output = []
     for k, v in data.items():
-        output.append(f"{v},Node Label,{type_name},Name,\"{k}\"\n")
+        output.append(f"{v};Node Label;{type_name};Name;\"{k}\"\n")
 
     return output
 
@@ -108,7 +108,7 @@ def main():
                 for actor in item["top_cast"]:
                     actor_id = actors[actor]
                     actor_ids.append(actor_id)
-                    f.write(f"{edge_count},{actor_id},{film_id},Edge Label,acted_in\n")
+                    f.write(f"{edge_count};{actor_id};{film_id};Edge Label;acted_in\n")
                     edge_count += 1
 
                     # Worked in set build
@@ -129,7 +129,7 @@ def main():
                 # Directed
                 for director in item["directors"]:
                     director_id = directors[director]
-                    f.write(f"{edge_count},{director_id},{film_id},Edge Label,directed\n")
+                    f.write(f"{edge_count};{director_id};{film_id};Edge Label;directed\n")
                     edge_count += 1
 
                     # Directed in set build
@@ -142,21 +142,21 @@ def main():
 
                 # Has genre
                 for genre_id in genre_ids:
-                    f.write(f"{edge_count},{film_id},{genre_id},Edge Label,has_genre\n")
+                    f.write(f"{edge_count};{film_id};{genre_id};Edge Label;has_genre\n")
                     edge_count += 1
                 # /Has genre
 
             # Directed in
             for pair in directed_in:
                 first, second = pair.split("_")
-                f.write(f"{edge_count},{first},{second},Edge Label,directed_in\n")
+                f.write(f"{edge_count};{first};{second};Edge Label;directed_in\n")
                 edge_count += 1
             # /Directed in
 
             # Worked with
             for pair in worked_with:
                 first, second = pair.split("_")
-                f.write(f"{edge_count},{first},{second},Edge Label,worked_with\n")
+                f.write(f"{edge_count};{first};{second};Edge Label;worked_with\n")
                 edge_count += 1
             # /Worked with
 
