@@ -8,6 +8,7 @@ import sys
 import json
 
 from json.decoder import JSONDecodeError
+from time import time
 
 SOURCE_DATA_DIR = "./source_data"
 GENERATEC_DATA_DIR = "./generated_data"
@@ -17,7 +18,7 @@ CREDIT_FILE = os.path.join(SOURCE_DATA_DIR, "credits.csv")
 
 TOTAL_ACTORS = 4
 
-BUDGET_THRESHOLD = 1e7
+BUDGET_THRESHOLD = 1e8
 
 
 def check_file_presence():
@@ -56,9 +57,8 @@ def filter_data(data, column, threshold):
 
 
 def fix_json_data(input_data, idx=None):
-
     def replace_quotes(input_data):
-        return input_data.replace("'", "\"")
+        return input_data.replace("'", '"')
 
     def replace_nones(input_data):
         return input_data.replace("None", "null")
@@ -66,9 +66,9 @@ def fix_json_data(input_data, idx=None):
     data = replace_quotes(input_data)
     data = replace_nones(data)
 
-    data = re.sub("^\"|\"$", "", data)
+    data = re.sub('^"|"$', "", data)
 
-    pattern = re.compile(": \"([^:]+?\"[^:]*?)+\",")
+    pattern = re.compile(': "([^:]+?"[^:]*?)+",')
     nested_quotes = re.finditer(pattern, data)
     if nested_quotes:
         for item in nested_quotes:
@@ -78,11 +78,11 @@ def fix_json_data(input_data, idx=None):
             e -= 2
 
             text = data[s:e]
-            text = text.replace("\"", "'")
+            text = text.replace('"', "'")
 
             data = data[:s] + text + data[e:]
 
-    pattern = re.compile("\"\"[^,]+?\"\"")
+    pattern = re.compile('""[^,]+?""')
     inside_double = re.finditer(pattern, data)
     if inside_double:
         s_offset = 0
@@ -95,7 +95,7 @@ def fix_json_data(input_data, idx=None):
             e = e + e_offset
 
             text = data[s:e]
-            text = "\"" + text[2:-2].replace("\"", "'") + "\""
+            text = '"' + text[2:-2].replace('"', "'") + '"'
 
             data = data[:s] + text + data[e:]
 
@@ -115,7 +115,7 @@ def force_parse_json(input_data):
         except JSONDecodeError as e:
             if "Invalid \escape" in e.msg:
                 idx = int(re.search(bad_char, str(e)).group().split(" ")[1])
-                input_data = input_data[: idx - 1] + input_data[idx + 1:]
+                input_data = input_data[: idx - 1] + input_data[idx + 1 :]
             else:
                 idx = int(re.search(bad_char, str(e)).group().split(" ")[1])
                 input_data = input_data[: idx - 1] + "'" + input_data[idx:]
@@ -160,6 +160,7 @@ def build_aggregated_movie_json(movie_data, credit_data):
 
     return output
 
+
 def write_data_to_file(data, filename):
     if not os.path.exists(filename):
         with open(filename, "w") as file:
@@ -180,7 +181,9 @@ def main():
     credit_data = get_csv_data(CREDIT_FILE, as_list=False)
 
     output = build_aggregated_movie_json(movie_data, credit_data)
-    write_data_to_file(output, os.path.join(GENERATEC_DATA_DIR, "movie_info.json"))
+    write_data_to_file(
+        output, os.path.join(GENERATEC_DATA_DIR, f"{int(time())}movie_info.json")
+    )
 
 
 if __name__ == "__main__":

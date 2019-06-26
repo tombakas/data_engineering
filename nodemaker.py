@@ -5,12 +5,13 @@ import os
 import sys
 import json
 
+from datetime import datetime as dt
 from itertools import combinations
 
 SOURCE_DATA_DIR = "./source_data"
-GENERATEC_DATA_DIR = "./generated_data"
+GENERATED_DATA_DIR = "./generated_data"
 
-MOVIE_FILE = os.path.join(GENERATEC_DATA_DIR, "movie_info.json")
+MOVIE_FILE = os.path.join(GENERATED_DATA_DIR, "movie_info.json")
 
 
 def node_build(data, type_name):
@@ -26,11 +27,17 @@ def main():
         data = json.loads(f.read())
 
     top_id = 1
+    edge_count = 1
+    node_count = 1
 
     films = {}
     actors = {}
     genres = {}
     directors = {}
+
+    current_time = dt.now().strftime("%Y-%m-%d_%H:%M")
+    target_dir = os.path.join(GENERATED_DATA_DIR, current_time)
+    os.mkdir(target_dir)
 
     # build film ids
     for item in data:
@@ -70,13 +77,13 @@ def main():
 
     nodes_groups = [film_nodes, actor_nodes, genre_nodes, director_nodes]
 
-    with open(os.path.join(GENERATEC_DATA_DIR, "nodes.csv"), "a") as f:
+    with open(os.path.join(target_dir, "nodes.csv"), "a") as f:
         for node_group in nodes_groups:
             for node in node_group:
+                node_count += 1
                 f.write(node)
 
-    top_edge = 1
-    with open(os.path.join(GENERATEC_DATA_DIR, "edges.csv"), "w") as f:
+    with open(os.path.join(target_dir, "edges.csv"), "w") as f:
         for item in data:
             film_id = films[item["title"]]
             genres_l = json.loads(item["genres"].replace("'", "\""))
@@ -87,8 +94,8 @@ def main():
             for actor in item["top_cast"]:
                 actor_id = actors[actor]
                 actor_ids.append(actor_id)
-                f.write(f"{top_edge},{actor_id},{film_id},Edge Label,acted_in\n")
-                top_edge += 1
+                f.write(f"{edge_count},{actor_id},{film_id},Edge Label,acted_in\n")
+                edge_count += 1
 
                 # Worked in set build
                 for genre_id in genre_ids:
@@ -108,8 +115,8 @@ def main():
             # Directed
             for director in item["directors"]:
                 director_id = directors[director]
-                f.write(f"{top_edge},{director_id},{film_id},Edge Label,directed\n")
-                top_edge += 1
+                f.write(f"{edge_count},{director_id},{film_id},Edge Label,directed\n")
+                edge_count += 1
 
                 # Directed in set build
                 for genre_id in genre_ids:
@@ -121,23 +128,27 @@ def main():
 
             # Has genre
             for genre_id in genre_ids:
-                f.write(f"{top_edge},{film_id},{genre_id},Edge Label,has_genre\n")
-                top_edge += 1
+                f.write(f"{edge_count},{film_id},{genre_id},Edge Label,has_genre\n")
+                edge_count += 1
             # /Has genre
 
         # Directed in
         for pair in directed_in:
             first, second = pair.split("_")
-            f.write(f"{top_edge},{first},{second},Edge Label,directed_in\n")
-            top_edge += 1
+            f.write(f"{edge_count},{first},{second},Edge Label,directed_in\n")
+            edge_count += 1
         # /Directed in
 
         # Worked with
         for pair in worked_with:
             first, second = pair.split("_")
-            f.write(f"{top_edge},{first},{second},Edge Label,worked_with\n")
-            top_edge += 1
+            f.write(f"{edge_count},{first},{second},Edge Label,worked_with\n")
+            edge_count += 1
         # /Worked with
+
+    with open(os.path.join(target_dir, "stats.txt"), "w") as f:
+        f.write(f"Node count: {node_count}\n")
+        f.write(f"Edge count: {edge_count}")
 
 
 if __name__ == "__main__":
