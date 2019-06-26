@@ -8,7 +8,7 @@ import sys
 import json
 
 from json.decoder import JSONDecodeError
-from time import time
+from datetime import datetime as dt
 
 SOURCE_DATA_DIR = "./source_data"
 GENERATEC_DATA_DIR = "./generated_data"
@@ -182,7 +182,10 @@ def main():
 
     output = build_aggregated_movie_json(movie_data, credit_data)
     write_data_to_file(
-        output, os.path.join(GENERATEC_DATA_DIR, f"{int(time())}movie_info.json")
+        output,
+        os.path.join(
+            GENERATEC_DATA_DIR, f"{dt.now().strftime('%Y-%m-%d_%H:%M')}_movie_info.json"
+        ),
     )
 
 
